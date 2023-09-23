@@ -3,7 +3,7 @@ import { BsDot, BsThreeDots, BsSearch } from 'react-icons/bs'
 
 export const RightSideBar = () => {
     return (
-        <section className='fixed ml-[875px] overflow-scroll  h-full w-96 pl-10 pt-0 space-y-4 flex flex-col'>
+        <section className='fixed ml-[875px] overflow-scroll  h-full w-96 pl-10 pt-0 space-y-4 flex flex-col text-white'>
             <div className='sticky top-0 w-full bg-black py-2'>
                 <div className='relative w-full h-full'>
                     <input id='search' type='text' placeholder='Search' className='peer rounded-full w-full max-w-screen-lg px-12 py-3 outline-none bg-zinc-800 text-sm focus:border focus:border-primary focus:bg-black'></input>

@@ -33,10 +33,10 @@ const TWEET_INTERACTIONS = [
 
 export const Tweet = () => {
     return (
-        <div className='flex justify-between py-2 px-5 border-b-[0.5px] border-opacity-80 border-coolGray-500'>
+        <div className='flex justify-between py-2 px-5 border-b-[0.5px] border-opacity-80 border-gray-500/50'>
             <div className='flex items-start'>
                 <div className='bg-slate-400 w-10 h-10 rounded-full' />
-                <div className='ml-3 w-full flex flex-col space-y-1 justify-center items-start'>
+                <div className='ml-3 w-full flex flex-col space-y-1 justify-center items-start text-white'>
                     <div className='flex items-center space-x-1'>
                         <div className='font-bold'>Dr Jordan Peterson</div>
                         <div><BsPatchCheckFill className='fill-primary' /></div>
