@@ -1,6 +1,10 @@
 import React from 'react';
 import { Tweet } from './Tweet';
-import composeTweet from '@/app/ServerAction/ComposeTweet';
+// import { experimental_useFormState as useFormState } from 'react-dom'
+import { experimental_useFormStatus as useFormStatus } from 'react-dom'
+import { composeTweet } from '@/app/ServerAction/ComposeTweet';
+import { PostgrestError } from '@supabase/supabase-js';
+import { CreateTweet } from './CreateTweet';
 
 export const MainComponent = () => {
 
@@ -9,27 +13,7 @@ export const MainComponent = () => {
       <h1 className='p-6 text-xl font-bold border-b-[0.5px] border-opacity-80 border-gray-500/50 pb-5 pl-5 pt-2 backdrop-blur bg-black/50 sticky top-0'>Home</h1>
 
       {/* Create tweet section */}
-      <div className='px-5 flex items-start flex-col border-b-[0.5px] border-opacity-80 border-r-accent-foreground border-gray-500/50'>
-        <form action={composeTweet} className='w-full'>
-          <div className='w-full flex items-center py-2'>
-            <div className='bg-slate-400 w-10 h-10 rounded-full' />
-            <div className='ml-3 w-full'>
-              <input type="text" name="tweet" placeholder="What is happening?!" className='w-full h-full bg-transparent text-2xl placeholder:text-opacity-50  placeholder:text-gray-600 border-none outline-none overflow-visible'></input>
-            </div>
-          </div>
-
-          <div className='flex items-center w-full justify-between my-2'>
-            <div className='w-full'>
-
-            </div>
-            <div className='w-full max-w-[80px] justify-items-end'>
-              <button className='bg-primary rounded-3xl py-2 px-1 w-full text-l text-center hover:opacity-90 transition duration-200 font-normal' name='post_tweet' type='submit'>
-                Post
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
+      <CreateTweet/>
 
       {/* Tweets */}
 

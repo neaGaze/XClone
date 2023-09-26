@@ -38,7 +38,7 @@ export const ED = () => {
 
                     if (data && data.length > 0) {
                         setIsLoading(false)
-                        return toast.error('Username already found')
+                        // return toast.error('Username already found')
                     }
 
                     if (error) {
