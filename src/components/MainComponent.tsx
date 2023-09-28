@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tweet } from './Tweet';
-// import { experimental_useFormState as useFormState } from 'react-dom'
 import { experimental_useFormStatus as useFormStatus } from 'react-dom'
-import { composeTweet } from '@/app/ServerAction/ComposeTweet';
-import { PostgrestError } from '@supabase/supabase-js';
 import { CreateTweet } from './CreateTweet';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { fetchTweet } from '@/app/services/fetchTweet';
+import { DisplayTweet } from './DisplayTweet';
 
-export const MainComponent = () => {
+export const MainComponent = async () => {
 
   return (
     <main className='ml-[275px]  w-[600px] flex flex-col h-full min-h-screen border-l-[0.5px] border-r-[0.5px] border-opacity-80 border-gray-500/50 pl-0 pr-0 text-white'>
@@ -16,12 +17,12 @@ export const MainComponent = () => {
       <CreateTweet/>
 
       {/* Tweets */}
-
-      {
+      <DisplayTweet tweets={await fetchTweet()}/>
+      {/* {
         Array.from({ length: 5 }).map((_, i) => (
-          <Tweet />
+          <Tweet key={i}/>
         ))
-      }
+      } */}
 
     </main>
   )

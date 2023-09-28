@@ -2,6 +2,7 @@
 import { Database } from '@/lib/database.types'
 import { createRouteHandlerClient, createServerActionClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { randomUUID } from 'crypto'
+import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { toast } from 'sonner'
 
@@ -26,6 +27,8 @@ export async function composeTweet(formData: FormData) {
   if (error) {
     return { data: null, error: error }
   }
+
+  revalidatePath('/');
 
   return { data: "Tweet successfully sent" }
 }
