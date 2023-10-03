@@ -12,3 +12,8 @@ export type TweetProps = {
 export type TweetsProps = {
     tweets: TweetProps[] | null;
 }
+
+export type TweetLikeProps = {
+    user_id: number;
+    tweet_id: number
+}

@@ -10,11 +10,21 @@ export const fetchTweet = async () => {
       profiles (
         username,
         full_name
+      ),
+      likes (
+        user_id
       )
     `)
     .order('created_at', { ascending: false })
     .returns<TweetsProps>()
 
-    // console.log("TWEETS: ", data)
+    console.log("TWEETS: ", data)
     return data
+}
+
+export const likesSubscriber = async () => {
+  const supabase = createServerComponentClient({ cookies })
+  const { data: likes, error } = await supabase.from('likes').on('INSERT', (payload) => {
+
+  }).subscribe()
 }
