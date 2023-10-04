@@ -4,7 +4,7 @@ import { experimental_useFormStatus as useFormStatus } from 'react-dom'
 import { CreateTweet } from './CreateTweet';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { fetchTweet } from '@/app/services/fetchTweet';
+import { fetchTweet, tweetSubscriber } from '@/app/services/fetchTweet';
 import { DisplayTweet } from './DisplayTweet';
 
 export const MainComponent = async () => {
@@ -24,6 +24,7 @@ export const MainComponent = async () => {
         ))
       } */}
 
+    {/* {await tweetSubscriber()} */}
     </main>
   )
 }
