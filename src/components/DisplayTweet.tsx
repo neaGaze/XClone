@@ -18,11 +18,12 @@ const update_state = (tweets: TweetProps[], new_tweet: TweetUpdateProps) => {
     return new_tweets;
 }
 
-export const DisplayTweet = ({ tweets }: { tweets: TweetProps[] }) => {
+export const DisplayTweet = ({ tweets, user }: { tweets: TweetProps[], user: any }) => {
 
     const [tweetMessages, setTweetMessages] = useState(tweets)
 
     useEffect(() => {
+        // console.log(`Logged in User in client: ${JSON.stringify(user)}`)
 
         const channel = supabase
             .channel('realtime_tweet_subscription')
@@ -47,7 +48,7 @@ export const DisplayTweet = ({ tweets }: { tweets: TweetProps[] }) => {
         <>
             {
                 tweetMessages?.map((tweet, i) => (
-                    <Tweet key={i} tweet={tweet} />
+                    <Tweet key={i} tweet={tweet} user={user} />
                 ))
             }
         </>

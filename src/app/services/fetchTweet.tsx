@@ -1,6 +1,14 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
 import { TweetProps, TweetsProps } from "../types/Props"
+import { Database } from "@/lib/database.types"
+
+export const getLoggedInUser = async () => {
+  const supabase = createServerComponentClient<Database>({ cookies })
+
+  const { data, error } = await supabase.auth.getUser()
+  return data
+}
 
 export const fetchTweet = async () => {
     const supabase = createServerComponentClient({ cookies })

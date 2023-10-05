@@ -30,6 +30,7 @@ export const Home = async () => {
   const { data, error } = await supabase.auth.getUser()
 
   // console.log({ data, error })
+  // console.log(`Logged in user: ${JSON.stringify(data)}`)
 
   return (
     <>
