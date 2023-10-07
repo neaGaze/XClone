@@ -63,7 +63,8 @@ export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
     const [likeToggle, setLikeToggle] = useState(false);
 
     useEffect(() => {
-        console.log("Logged In User: ", JSON.stringify(user));
+        // console.log("Logged In User: ", JSON.stringify(user));
+
     })
 
     return (

@@ -27,5 +27,5 @@ export const likeTweet = async (formData: FormData) => {
         return { data: null, error: error }
     }
 
-    revalidatePath('/');
+    // revalidatePath('/');
 }

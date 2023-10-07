@@ -8,6 +8,7 @@ export type TweetProps = {
     text: string;
     created_at: string;
     profiles: UserProps;
+    likes: TweetLikeProps[]
 }
 
 export type TweetsProps = {
@@ -15,8 +16,8 @@ export type TweetsProps = {
 }
 
 export type TweetLikeProps = {
-    user_id: number;
-    tweet_id: number
+    user_id: string;
+    tweet_id: string
 }
 
 export type TweetUpdateProps = {
