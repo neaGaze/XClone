@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 export const likeTweet = async (formData: FormData) => {
     const like_value = formData.get("like_value");
     const tweet_id = formData.get("tweet_id");
-    console.log(`Liking the tweet server logic: ${like_value}`)
+    console.log(`${!!like_value ? "Unl" : "L"}iking the tweet. Like Id: ${like_value}`)
 
 
     const supabase = createServerComponentClient({ cookies })
@@ -16,8 +16,10 @@ export const likeTweet = async (formData: FormData) => {
     const profile = user.data.user
     console.log("supabase client: ", profile?.email)
 
-    if (!like_value) {
-        return { data: null, error: "Not supporting dislike button" }
+    if (like_value) {
+        const { error } = await supabase.from('likes').delete().eq('id', like_value)
+        console.log(`Delete result from supabase. Error: ${error}`)
+        return {undefined, error}
     }
 
     const { data, error } = await supabase.from('likes').insert({ id: randomUUID(), user_id: profile?.id, tweet_id: tweet_id })
@@ -28,4 +30,6 @@ export const likeTweet = async (formData: FormData) => {
     }
 
     // revalidatePath('/');
+    console.log(`Tweet LIKE Result: ${data}. \n Error: ${error}`)
+    return { data, error }
 }

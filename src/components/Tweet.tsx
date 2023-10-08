@@ -58,13 +58,19 @@ const TWEET_INTERACTIONS = [
 
 export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
 
-    // const [optimisticMessages, addOptimisticMessage] = useOptimistic<TweetLikeProps>(
-    // )
-    const [likeToggle, setLikeToggle] = useState(false);
+    const [tweetLikes, setTweetLikes] = useState(tweet.likes)
+    const [likeToggle, setLikeToggle] = useState((!!tweetLikes.some((like: TweetLikeProps) => like.user_id == user.user.id)) ? tweetLikes[0].id : undefined);
+
+    const [optimisticTweetLike, addOptimisticTweetLike] = useOptimistic<TweetLikeProps[]>(
+        tweetLikes,
+        (state: TweetLikeProps[], new_tweet_like: TweetLikeProps) => [...state, new_tweet_like]
+    )
+
 
     useEffect(() => {
-        // console.log("Logged In User: ", JSON.stringify(user));
-
+        // console.log("Logged In User: ", JSON.stringify(user.user));
+        // console.log(`TWEET LIKES DISPLAY: ${JSON.stringify(tweetLikes.map((like: TweetLikeProps) => like.user_id))}`)
+        // console.log(`LikeToggle status: ${(tweetLikes.map((like: TweetLikeProps) => like.user_id).includes(user.user.id))}`)
     })
 
     return (
@@ -86,12 +92,12 @@ export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
                     <div className='w-full mt-2 flex items-center space-x-0 justify-between from-neutral-50 text-gray-500'>
                         {TWEET_INTERACTIONS.map((item) => (
                             <form name={item.name} action={item.action}>
-                                <input type='checkbox' name="likeCheckbox" className='hidden' checked={likeToggle} onChange={() => setLikeToggle(!likeToggle)}/>
-                                <input type="text" name="like_value" className='hidden' readOnly value={ !(tweet.likes.map((like: TweetLikeProps) => like.user_id).includes(user.id)) }/>
+                                <input type='checkbox' name="likeCheckbox" className='hidden' checked={!!likeToggle} onChange={() => setLikeToggle(!likeToggle)}/>
+                                <input type="text" name="like_value" className='hidden' readOnly value={ likeToggle }/>
                                 <input type="text" name="tweet_id" className='hidden' readOnly value={tweet.id} />
                                 <button type='submit' name="likeunlikebutton" className='flex space-x-0 items-center group'>
                                     <div className={`${item.styles.text_hover} ${item.styles.icon_bg_hover} w-8 h-8 flex items-center justify-center mr-2 rounded-full `}> <item.icon /> </div>
-                                    <div> <text className={`w-2 h-2 text-xs font-bold ${item.styles.text_hover}`}>{ item.value(tweet.likes) }</text></div>
+                                    <div> <text className={`w-2 h-2 text-xs font-bold ${item.styles.text_hover}`}>{ item.value(tweetLikes) }</text></div>
                                 </button>
                             </form>
 

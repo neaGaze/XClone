@@ -21,6 +21,7 @@ export const fetchTweet = async () => {
         full_name
       ),
       likes (
+        id,
         user_id
       )
     `)
