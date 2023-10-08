@@ -1,12 +1,10 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { BsDot } from 'react-icons/bs'
-import { FaRegComment, FaRetweet } from 'react-icons/fa6'
-import { AiOutlineHeart, AiOutlineRetweet } from 'react-icons/ai'
+import { FaRegComment } from 'react-icons/fa6'
+import { FaCommentAlt } from 'react-icons/fa'
+import { AiFillHeart, AiOutlineHeart, AiOutlineRetweet } from 'react-icons/ai'
 import { IoShareOutline, IoStatsChart } from 'react-icons/io5'
-import { FaRegHeart } from 'react-icons/fa'
-import { FiUpload } from 'react-icons/fi'
-import { VscGraph } from 'react-icons/vsc'
 import { BsPatchCheckFill } from 'react-icons/bs'
 import { TweetLikeProps, TweetProps } from '@/app/types/Props'
 import dayjs from 'dayjs'
@@ -21,40 +19,44 @@ dayjs.extend(relativeTime)
 const TWEET_INTERACTIONS = [
     {
         name: "comment",
-        icon: FaRegComment,
+        icon: { fill_icon: FaCommentAlt, empty_icon: FaRegComment},
         value: () => "3",
-        styles: { text_hover: "group-hover:text-blue-500", icon_bg_hover: "group-hover:bg-blue-500/25" },
+        styles: { text_hover: "group-hover:text-blue-500", icon_bg_hover: "group-hover:bg-blue-500/25", icon_fill_color: "text-blue-500" },
         action: () => {}
     },
     {
         name: "retweet",
-        icon: AiOutlineRetweet,
+        icon: { fill_icon: AiOutlineRetweet, empty_icon: AiOutlineRetweet },
         value: () => "77",
-        styles: { text_hover: "group-hover:text-green-500", icon_bg_hover: "group-hover:bg-green-500/25" },
+        styles: { text_hover: "group-hover:text-green-500", icon_bg_hover: "group-hover:bg-green-500/25", icon_fill_color: "text-green-500" },
         action: () => {}
     },
     {
         name: "like",
-        icon: AiOutlineHeart,
+        icon: { fill_icon: AiFillHeart, empty_icon: AiOutlineHeart },
         value: (likes: []) => likes.length > 0 ? likes.length : "",
-        styles: { text_hover: "group-hover:text-red-500", icon_bg_hover: "group-hover:bg-red-500/25" },
+        styles: { text_hover: "group-hover:text-red-500", icon_bg_hover: "group-hover:bg-red-500/25", icon_fill_color: "text-red-500" },
         action: likeTweet
     },
     {
         name: "stats",
-        icon: IoStatsChart,
+        icon: { fill_icon: IoStatsChart, empty_icon: IoStatsChart },
         value: () => "51.1K",
-        styles: { text_hover: "group-hover:text-blue-500", icon_bg_hover: "group-hover:bg-blue-500/25" },
+        styles: { text_hover: "group-hover:text-blue-500", icon_bg_hover: "group-hover:bg-blue-500/25", icon_fill_color: "text-blue-500" },
         action: () => {}
     },
     {
         name: "share",
-        icon: IoShareOutline,
+        icon: { fill_icon: IoShareOutline, empty_icon: IoShareOutline },
         value: () => "",
-        styles: { text_hover: "group-hover:text-blue-500", icon_bg_hover: "group-hover:bg-blue-500/25" },
+        styles: { text_hover: "group-hover:text-blue-500", icon_bg_hover: "group-hover:bg-blue-500/25", icon_fill_color: "text-blue-500" },
         action: () => {}
     }
 ]
+
+const style_picker = (predicate: boolean, item: any) => {
+    
+}
 
 export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
 
@@ -118,8 +120,14 @@ export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
                                 <input type="text" name="like_value" className='hidden' readOnly value={ likeToggle }/>
                                 <input type="text" name="tweet_id" className='hidden' readOnly value={tweet.id} />
                                 <button type='submit' name="likeunlikebutton" className='flex space-x-0 items-center group'>
-                                    <div className={`${item.styles.text_hover} ${item.styles.icon_bg_hover} w-8 h-8 flex items-center justify-center mr-2 rounded-full `}> <item.icon /> </div>
-                                    <div> <text className={`w-2 h-2 text-xs font-bold ${item.styles.text_hover}`}>{ item.value(tweetLikes) }</text></div>
+                                    <div className={`${item.styles.text_hover} ${item.styles.icon_bg_hover} w-8 h-8 flex items-center justify-center mr-2 rounded-full`}>
+                                        { 
+                                            (item.name === 'like' && likeToggle) ?  <item.icon.fill_icon className={`${item.styles.icon_fill_color}`}/> : <item.icon.empty_icon className="text-gray-500"/> 
+                                        }
+                                    </div>
+                                    <div>
+                                         <text className={`w-2 h-2 text-xs font-bold ${item.styles.text_hover} ${(item.name === 'like' && likeToggle) ? item.styles.icon_fill_color : 'text-gray-500'}`}>{ item.value(tweetLikes) }</text>
+                                    </div>
                                 </button>
                             </form>
 
