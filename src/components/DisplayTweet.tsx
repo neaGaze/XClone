@@ -26,6 +26,7 @@ const update_tweet_likes = (tweets: TweetProps[], payload: { new: TweetLikeProps
 
     const new_tweets: TweetProps[] = []
 
+    console.log(`BEFORE >> Updating tweets state due to like subscriber change as ${JSON.stringify(tweets)}`)
     tweets.forEach(tweet => {
         if(new_like.tweet_id === tweet.id) {
             if(event_type === "INSERT") {
@@ -35,12 +36,13 @@ const update_tweet_likes = (tweets: TweetProps[], payload: { new: TweetLikeProps
 
         if(event_type === "DELETE") {
             console.log(`Like ID to delete found at ${tweet.likes.findIndex(l => l.id === old_like.id)}`)
-            tweet.likes.splice(tweet.likes.findIndex(l => l.id === old_like.id))
+            // tweet.likes.splice(tweet.likes.findIndex(l => l.id === old_like.id))
+            tweet.likes = tweet.likes.filter((l, i) => l.id !== old_like.id)
         }
-        
+
         new_tweets.push(tweet)
     })
-    console.log(`Updating tweets state due to like subscriber change as ${JSON.stringify(tweets)}`)
+    console.log(`AFTER >> Updating tweets state due to like subscriber change as ${JSON.stringify(new_tweets)}`)
     return new_tweets;
 }
 

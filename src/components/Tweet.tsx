@@ -58,19 +58,41 @@ const TWEET_INTERACTIONS = [
 
 export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
 
-    const [tweetLikes, setTweetLikes] = useState(tweet.likes)
-    const [likeToggle, setLikeToggle] = useState((!!tweetLikes.some((like: TweetLikeProps) => like.user_id == user.user.id)) ? tweetLikes[0].id : undefined);
+    const [tweetLikes, setTweetLikes] = useState([])
+    const [likeToggle, setLikeToggle] = useState("");
 
     const [optimisticTweetLike, addOptimisticTweetLike] = useOptimistic<TweetLikeProps[]>(
         tweetLikes,
         (state: TweetLikeProps[], new_tweet_like: TweetLikeProps) => [...state, new_tweet_like]
     )
 
+    // const likeTweetAction = async (formData: FormData) => {
+    //     const { data,error } = await likeTweet(formData)
+    //     if(!!error) {
+    //         if(!!likeToggle) {
+    //             console.log(`UNLIKE RESULT client`)
+    //             setTweetLikes(tweetLikes.splice(tweetLikes.findIndex(l => l.user_id === user.id)))  // logic for removing the tweet like from the current user
+    //             setLikeToggle(undefined)
+    //         } else {
+    //             console.log(`LIKE RESULT client data: ${JSON.stringify(data)}`)
+    //             setTweetLikes([...tweetLikes, data[0]])
+    //             setLikeToggle(data[0].tweet_id)
+    //         }
+                
+    //     }
+    //     return { data: data, error: error }
+    // }
 
     useEffect(() => {
         // console.log("Logged In User: ", JSON.stringify(user.user));
         // console.log(`TWEET LIKES DISPLAY: ${JSON.stringify(tweetLikes.map((like: TweetLikeProps) => like.user_id))}`)
         // console.log(`LikeToggle status: ${(tweetLikes.map((like: TweetLikeProps) => like.user_id).includes(user.user.id))}`)
+
+        // TWEET_INTERACTIONS[2].action = likeTweetAction;
+
+        console.log(`TWEET: ${JSON.stringify(tweet)}`)
+        setTweetLikes(tweet.likes);
+        setLikeToggle((!!tweetLikes.some((like: TweetLikeProps) => like.user_id == user.user.id)) ? tweetLikes[0].id : "");
     })
 
     return (

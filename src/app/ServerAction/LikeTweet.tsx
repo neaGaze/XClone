@@ -16,20 +16,22 @@ export const likeTweet = async (formData: FormData) => {
     const profile = user.data.user
     console.log("supabase client: ", profile?.email)
 
+    // unlike function
     if (like_value) {
         const { error } = await supabase.from('likes').delete().eq('id', like_value)
         console.log(`Delete result from supabase. Error: ${error}`)
-        return {undefined, error}
+        return { error: error }
     }
 
-    const { data, error } = await supabase.from('likes').insert({ id: randomUUID(), user_id: profile?.id, tweet_id: tweet_id })
+    // LIKE function
+    const { data, error } = await supabase.from('likes').insert([{ id: randomUUID(), user_id: profile?.id, tweet_id: tweet_id }]).select()
     // console.log("Sending ", tweet, " by ", profile?.email)
-    console.log(`data: ${data}, error: ${error?.message}`)
-    if (error) {
-        return { data: null, error: error }
+    console.log(`LIKE RESULT: data: ${JSON.stringify(data)}, error: ${error?.message}`)
+    if (!!error) {
+        return { error: error }
     }
 
     // revalidatePath('/');
-    console.log(`Tweet LIKE Result: ${data}. \n Error: ${error}`)
-    return { data, error }
+    // console.log(`Tweet LIKE Result: ${data}. \n Error: ${error}`)
+    return { data: data, error: error }
 }
