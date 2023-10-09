@@ -195,6 +195,7 @@ export interface Database {
         Row: {
           created_at: string
           id: string
+          reply_tweet_id: string | null
           text: string
           updated_at: string
           user_id: string
@@ -202,6 +203,7 @@ export interface Database {
         Insert: {
           created_at?: string
           id: string
+          reply_tweet_id?: string | null
           text: string
           updated_at?: string
           user_id: string
@@ -209,6 +211,7 @@ export interface Database {
         Update: {
           created_at?: string
           id?: string
+          reply_tweet_id?: string | null
           text?: string
           updated_at?: string
           user_id?: string

@@ -23,6 +23,11 @@ export const fetchTweet = async () => {
       likes (
         id,
         user_id
+      ),
+      replies (
+        id,
+        user_id,
+        reply_id
       )
     `)
     .order('created_at', { ascending: false })
