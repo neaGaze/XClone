@@ -4,7 +4,7 @@ import { experimental_useFormStatus as useFormStatus } from 'react-dom'
 import { CreateTweet } from './CreateTweet';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { fetchTweet, getLoggedInUser, tweetSubscriber } from '@/app/services/fetchTweet';
+import { fetchAllTweet, getLoggedInUser, tweetSubscriber } from '@/app/services/fetchTweet';
 import { DisplayTweet } from './DisplayTweet';
 
 export const MainComponent = async () => {
@@ -20,7 +20,7 @@ export const MainComponent = async () => {
       <CreateTweet/>
 
       {/* Tweets */}
-      <DisplayTweet user={loggedInUser} tweets={await fetchTweet() || []}/>
+      <DisplayTweet user={loggedInUser} tweets={await fetchAllTweet() || []}/>
       {/* {
         Array.from({ length: 5 }).map((_, i) => (
           <Tweet key={i}/>

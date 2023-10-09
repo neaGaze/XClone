@@ -1,5 +1,6 @@
+'use client'
 import { TweetProps } from '@/app/types/Props'
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from './ui/button'
 import { DialogFooter, DialogHeader, Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from './ui/dialog'
 import { BsDot, BsPatchCheckFill } from 'react-icons/bs'
@@ -9,17 +10,22 @@ import { composeTweet } from '@/app/ServerAction/ComposeTweet'
 import { toast } from 'sonner'
 
 export const ReplyComponent = ({ tweet, children }: { tweet: TweetProps, children: any }) => {
+  
+  const [isOpen, setIsOpen] = useState(false)
+
   const handleSubmitTweet = async (formData: FormData) => {
-
-
     const { data, error } = await composeTweet(formData)
     console.log(data, error);
 
     (data !== null) ? toast.message(data) : toast.error(error.toString());
+
+    if(data) {
+      setIsOpen(false)
+    }
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
@@ -41,9 +47,9 @@ export const ReplyComponent = ({ tweet, children }: { tweet: TweetProps, childre
 
             <div className='ml-3 w-full flex flex-col space-y-1 justify-center items-start text-white'>
               <div className='flex items-center space-x-1'>
-                <div className='font-bold'>{tweet.profiles.name || "Nigesh Shakya"}</div>
+                <div className='font-bold'>{tweet.profiles?.full_name || "Nigesh Shakya"}</div>
                 <div><BsPatchCheckFill className='fill-primary' /></div>
-                <div className='text-gray-600'> @{tweet.profiles.username}</div>
+                <div className='text-gray-600'> @{tweet.profiles?.username}</div>
                 <div><BsDot /></div>
                 <div className='text-gray-600'>{dayjs().from(dayjs(tweet.created_at))}</div>
               </div>

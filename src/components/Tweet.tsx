@@ -121,9 +121,9 @@ export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
                 <div className='bg-slate-400 w-10 h-10 rounded-full' />
                 <div className='ml-3 w-full flex flex-col space-y-1 justify-center items-start text-white'>
                     <div className='flex items-center space-x-1'>
-                        <div className='font-bold'>{tweet.profiles.name || "Nigesh Shakya"}</div>
+                        <div className='font-bold'>{tweet.profiles?.full_name || "Nigesh Shakya"}</div>
                         <div><BsPatchCheckFill className='fill-primary' /></div>
-                        <div className='text-gray-600'> @{tweet.profiles.username}</div>
+                        <div className='text-gray-600'> @{tweet.profiles?.username}</div>
                         <div><BsDot /></div>
                         <div className='text-gray-600'>{dayjs().from(dayjs(tweet.created_at))}</div>
                     </div>

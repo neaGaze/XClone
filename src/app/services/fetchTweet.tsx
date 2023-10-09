@@ -10,26 +10,30 @@ export const getLoggedInUser = async () => {
   return data
 }
 
-export const fetchTweet = async () => {
+
+const TweetSelector = 
+`
+id,
+text,
+created_at,
+profiles (
+  username,
+  full_name
+),
+likes (
+  id,
+  user_id
+),
+replies!tweet_id (
+  id,
+  user_id,
+  reply_id
+)
+`
+
+export const fetchAllTweet = async () => {
   const supabase = createServerComponentClient({ cookies })
-  const { data, error } = await supabase.from('tweets').select(`
-      id,
-      text,
-      created_at,
-      profiles (
-        username,
-        full_name
-      ),
-      likes (
-        id,
-        user_id
-      ),
-      replies!tweet_id (
-        id,
-        user_id,
-        reply_id
-      )
-    `)
+  const { data, error } = await supabase.from('tweets').select(TweetSelector)
     .order('created_at', { ascending: false })
     .returns<TweetProps[]>()
 
@@ -38,6 +42,22 @@ export const fetchTweet = async () => {
     return []
   }
   console.log("TWEETS: ", data)
+  return data
+}
+
+export const fetchTweetById = async (tweetId: string) => {
+  const supabase = createServerComponentClient({ cookies })
+  const { data, error } = await supabase.from('tweets')
+    .select(TweetSelector)
+    .eq('id', tweetId)
+    .order('created_at', { ascending: false })
+    .returns<TweetProps[]>()
+
+  if (error) {
+    console.error(`Error fetching tweets: ${error?.message}`)
+    return []
+  }
+  console.log("TWEET By ID: ", data)
   return data
 }
 
