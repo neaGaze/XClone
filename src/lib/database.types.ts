@@ -124,21 +124,18 @@ export interface Database {
         Row: {
           id: string
           reply_id: string | null
-          text: string
           tweet_id: string | null
           user_id: string
         }
         Insert: {
           id: string
           reply_id?: string | null
-          text: string
           tweet_id?: string | null
           user_id: string
         }
         Update: {
           id?: string
           reply_id?: string | null
-          text?: string
           tweet_id?: string | null
           user_id?: string
         }
@@ -146,7 +143,7 @@ export interface Database {
           {
             foreignKeyName: "replies_reply_id_fkey"
             columns: ["reply_id"]
-            referencedRelation: "replies"
+            referencedRelation: "tweets"
             referencedColumns: ["id"]
           },
           {

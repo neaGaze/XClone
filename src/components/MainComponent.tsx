@@ -20,7 +20,7 @@ export const MainComponent = async () => {
       <CreateTweet/>
 
       {/* Tweets */}
-      <DisplayTweet user={loggedInUser} tweets={await fetchTweet()}/>
+      <DisplayTweet user={loggedInUser} tweets={await fetchTweet() || []}/>
       {/* {
         Array.from({ length: 5 }).map((_, i) => (
           <Tweet key={i}/>

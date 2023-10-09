@@ -11,8 +11,8 @@ export const getLoggedInUser = async () => {
 }
 
 export const fetchTweet = async () => {
-    const supabase = createServerComponentClient({ cookies })
-    const { data, error } = await supabase.from('tweets').select(`
+  const supabase = createServerComponentClient({ cookies })
+  const { data, error } = await supabase.from('tweets').select(`
       id,
       text,
       created_at,
@@ -24,7 +24,7 @@ export const fetchTweet = async () => {
         id,
         user_id
       ),
-      replies (
+      replies!tweet_id (
         id,
         user_id,
         reply_id
@@ -33,8 +33,12 @@ export const fetchTweet = async () => {
     .order('created_at', { ascending: false })
     .returns<TweetProps[]>()
 
-    console.log("TWEETS: ", data)
-    return data
+  if (error) {
+    console.error(`Error fetching tweets: ${error?.message}`)
+    return []
+  }
+  console.log("TWEETS: ", data)
+  return data
 }
 
 export const likesSubscriber = async () => {
@@ -47,14 +51,14 @@ export const likesSubscriber = async () => {
 export const tweetSubscriber = async () => {
   const supabase = createServerComponentClient({ cookies })
   const channel = await supabase
-  .channel('realtime_tweet_subscription')
-  .on('postgres_changes', 
-  {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'tweets'
-  }, 
-  (payload: any) => {
-      console.log(`payload on realtime change 2 in server: ${payload}`)
-  }).subscribe()
+    .channel('realtime_tweet_subscription')
+    .on('postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'tweets'
+      },
+      (payload: any) => {
+        console.log(`payload on realtime change 2 in server: ${payload}`)
+      }).subscribe()
 }
