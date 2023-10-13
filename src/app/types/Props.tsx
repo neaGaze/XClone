@@ -25,13 +25,14 @@ export type TweetLikeProps = {
 export type TweetReplyProps = {
     id: string,
     user_id: string,
+    tweet_id: string,
     reply_id: string
 }
 
 export type TweetUpdateProps = {
+    id: string,
+    text: string,
     created_at: Date,
     updated_at: Date,
-    text: string,
     user_id: string,
-    id: string
 }

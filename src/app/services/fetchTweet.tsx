@@ -1,4 +1,4 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { SupabaseClient, createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
 import { TweetProps, TweetsProps } from "../types/Props"
 import { Database } from "@/lib/database.types"
@@ -45,21 +45,6 @@ export const fetchAllTweet = async () => {
   return data
 }
 
-export const fetchTweetById = async (tweetId: string) => {
-  const supabase = createServerComponentClient({ cookies })
-  const { data, error } = await supabase.from('tweets')
-    .select(TweetSelector)
-    .eq('id', tweetId)
-    .order('created_at', { ascending: false })
-    .returns<TweetProps[]>()
-
-  if (error) {
-    console.error(`Error fetching tweets: ${error?.message}`)
-    return []
-  }
-  console.log("TWEET By ID: ", data)
-  return data
-}
 
 export const likesSubscriber = async () => {
   const supabase = createServerComponentClient({ cookies })

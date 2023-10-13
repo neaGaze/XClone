@@ -1,12 +1,53 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { Tweet } from './Tweet'
-import { TweetLikeProps, TweetProps, TweetUpdateProps, TweetsProps } from '@/app/types/Props'
+import { TweetLikeProps, TweetProps, TweetReplyProps, TweetUpdateProps, TweetsProps } from '@/app/types/Props'
 import supabase from '@/app/common/supabase'
 import { experimental_useOptimistic as useOptimistic } from 'react'
 import { Button } from './ui/button'
-import { fetchTweetById } from '@/app/services/fetchTweet'
+import { revalidatePath } from 'next/cache'
+import { SupabaseClient } from '@supabase/auth-helpers-nextjs'
 
+const TweetSelector = 
+`
+id,
+text,
+created_at,
+profiles (
+  username,
+  full_name
+),
+likes (
+  id,
+  user_id
+),
+replies!tweet_id (
+  id,
+  user_id,
+  reply_id
+)
+`
+
+const fetchTweetById = async (supabase: SupabaseClient, tweetId: string) => {
+    const { data, error } = await supabase.from('tweets')
+      .select(TweetSelector)
+      .eq('id', tweetId)
+      .order('created_at', { ascending: false })
+      .returns<TweetProps[]>()
+  
+    if (error) {
+      console.error(`Error fetching tweets: ${error?.message}`)
+      return []
+    }
+  
+    if(data.length === 0) {
+      console.error(`Empty result given by server. The tweet with ID ${tweetId} is not found.`)
+      return []
+    }
+    
+    console.log("TWEET By ID: ", data)
+    return data
+  }
 
 const update_state = (tweets: TweetProps[], new_tweet: TweetUpdateProps) => {
     const new_tweets: TweetProps[] = []
@@ -48,10 +89,28 @@ const update_tweet_likes = (tweets: TweetProps[], payload: { new: TweetLikeProps
     return new_tweets;
 }
 
+const mergeTweets = (tweetMessages: TweetProps[], outstandingTweetMessages: TweetProps[]) : TweetProps[] => {
+    
+    const merged_tweets = [...outstandingTweetMessages] as TweetProps[]
+    const hash_tweet_ids = {}
+    outstandingTweetMessages.forEach(tweetMessage => { 
+        hash_tweet_ids[tweetMessage.id] = tweetMessage;
+    })
+    tweetMessages.forEach(m => {
+        if(!(m.id in hash_tweet_ids)) {
+            merged_tweets.push(m)
+        }
+    })
+    const sorted_merged_tweets = merged_tweets.sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    // [...tweetMessages, ...outstandingTweetMessages].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) as TweetProps[]
+    
+    return sorted_merged_tweets
+}
+
 export const DisplayTweet = ({ tweets, user }: { tweets: TweetProps[], user: any }) => {
 
     const [tweetMessages, setTweetMessages] = useState(tweets)
-    const [outstandingTweetMessages, setOutstandingTweetMessages] = useState([])
+    const [outstandingTweetMessages, setOutstandingTweetMessages] = useState([] as TweetProps[])
 
     // const [optimisticTweets, addOptimisticTweets] = useOptimistic<TweetProps[]>(
     //     tweets,
@@ -60,7 +119,7 @@ export const DisplayTweet = ({ tweets, user }: { tweets: TweetProps[], user: any
     //     }
     // )
 
-    const resetOutstandingTweets = (e: any) => setOutstandingTweetMessages([]);
+    const resetOutstandingTweets = (e: any) => setOutstandingTweetMessages([] as TweetProps[]);
 
     useEffect(() => {
         // console.log(`Logged in User in client: ${JSON.stringify(user)}`)
@@ -90,10 +149,33 @@ export const DisplayTweet = ({ tweets, user }: { tweets: TweetProps[], user: any
                 async (payload) => {
                     console.log(`payload on TWEET CREATE realtime change: ${JSON.stringify(payload)}`)
                     const new_tweet = payload.new as TweetUpdateProps;
-                    // const updated_new_tweet = await fetchTweetById(new_tweet?.id)
-                    setOutstandingTweetMessages([...outstandingTweetMessages, new_tweet])
+                    const updated_new_tweets = await fetchTweetById(supabase, new_tweet?.id) 
+                    if(updated_new_tweets.length > 0) {
+                        console.log(`Found the tweet from DB after realtime update fetch: ${JSON.stringify(updated_new_tweets)}`)
+                        setOutstandingTweetMessages([...outstandingTweetMessages, updated_new_tweets[0]])
+                    } else console.error(`Expected the db to have tweetID: ${new_tweet?.id} but wasn't found`);
                 }).subscribe()
 
+            const tweet_replies_subscriber_channel = supabase
+                .channel('realtime_tweet_replies_subscription')
+                .on('postgres_changes',
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'replies',
+                        filter: `tweet_id=in.(${tweets.map((t: any) => t.id)})`
+                    },
+                    async (payload) => {
+                        console.log(`payload on TWEET REPLIES realtime change: ${JSON.stringify(payload)}`)
+                        const new_reply = payload.new as TweetReplyProps;
+                        const updated_new_replies = await fetchTweetById(supabase, new_reply?.tweet_id) 
+                        if(updated_new_replies.length > 0) {
+                            console.log(`Found the tweet replies from DB after realtime update fetch: ${JSON.stringify(updated_new_replies)}`)
+                            setOutstandingTweetMessages([...outstandingTweetMessages, updated_new_replies[0]])
+                        } else console.error(`Expected the db to have tweetID: ${new_reply?.tweet_id} but wasn't found`);
+                    }).subscribe()
+
+                    
         const likes_subscriber_channel = supabase
             .channel('realtime_like_subscription')
             .on('postgres_changes',
@@ -115,6 +197,7 @@ export const DisplayTweet = ({ tweets, user }: { tweets: TweetProps[], user: any
         return () => {
             supabase.removeChannel(tweet_update_subscriber_channel);
             supabase.removeChannel(tweet_create_subscriber_channel);
+            supabase.removeChannel(tweet_replies_subscriber_channel);
             supabase.removeChannel(likes_subscriber_channel);
             window.removeEventListener("beforeunload", resetOutstandingTweets)
         }
@@ -125,8 +208,7 @@ export const DisplayTweet = ({ tweets, user }: { tweets: TweetProps[], user: any
             {
                 (outstandingTweetMessages.length > 0) ?
                     (<Button onClick={(e) => {
-                        outstandingTweetMessages.forEach(m => tweetMessages.push(m))
-                        setTweetMessages(tweetMessages)
+                        setTweetMessages(mergeTweets(tweetMessages, outstandingTweetMessages))
                         resetOutstandingTweets(e)
                     }} className='text-primary bg-transparent border-y-[0.5px] border-opacity-80 border-gray-500/50 py-6 text-sm font-normal hover:bg-transparent'>Show {outstandingTweetMessages.length} posts</Button>)
                     : <></>
