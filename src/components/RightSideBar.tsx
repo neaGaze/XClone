@@ -46,7 +46,7 @@ export const RightSideBar = () => {
                 <h3 className='font-bold text-white text-xl p-4'>Who to follow</h3>
                 {
                     Array.from({ length: 5 }).map((_, i) => (
-                        <div className='flex w-full px-4 py-4 hover:bg-neutral-700/10'>
+                        <div key={i} className='flex w-full px-4 py-4 hover:bg-neutral-700/10'>
                             <div className='bg-slate-400 w-10 h-10 rounded-full' />
                             <div className='flex flex-col items-start px-4 w-[60%]'>
                                 <div className='font-bold'>Emery Wells</div>
