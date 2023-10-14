@@ -10,7 +10,7 @@ import { Toaster } from 'sonner';
 
 export const dynamic = 'force-dynamic'
 
-export const Home = async () => {
+const Home = async () => {
   const supabase = createServerComponentClient<Database>({ cookies })
 
   const { data, error } = await supabase.auth.getUser()

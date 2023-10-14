@@ -199,7 +199,7 @@ export const DisplayTweet = ({ tweets, user }: { tweets: TweetProps[], user: any
             supabase.removeChannel(likes_subscriber_channel);
             window.removeEventListener("beforeunload", resetOutstandingTweets)
         }
-    }, [supabase, tweetMessages, outstandingTweetMessages, setTweetMessages, setOutstandingTweetMessages])
+    }, [tweets, tweetMessages, outstandingTweetMessages, setTweetMessages, setOutstandingTweetMessages])
 
     return (
         <>
