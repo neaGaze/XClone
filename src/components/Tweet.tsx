@@ -8,11 +8,8 @@ import { IoShareOutline, IoStatsChart } from 'react-icons/io5'
 import { BsPatchCheckFill } from 'react-icons/bs'
 import { TweetLikeProps, TweetProps } from '@/app/types/Props'
 import dayjs from 'dayjs'
-import { experimental_useFormStatus as useFormStatus } from 'react-dom'
 import { experimental_useOptimistic as useOptimistic } from 'react'
 import { likeTweet } from '@/app/ServerAction/LikeTweet'
-import supabase from '@/app/common/supabase'
-import { getLoggedInUser } from '@/app/services/fetchTweet'
 import { ReplyComponent } from './ReplyComponent'
 var relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
@@ -21,14 +18,14 @@ const TWEET_INTERACTIONS = [
     {
         name: "comment",
         icon: { fill_icon: FaCommentAlt, empty_icon: FaRegComment },
-        value: () => "3",
+        value: (replies: []) => replies.length > 0 ? replies.length : "",
         styles: { text_hover: "group-hover:text-blue-500", icon_bg_hover: "group-hover:bg-blue-500/25", icon_fill_color: "text-blue-500" },
         action: () => { }
     },
     {
         name: "retweet",
         icon: { fill_icon: AiOutlineRetweet, empty_icon: AiOutlineRetweet },
-        value: () => "77",
+        value: () => "",
         styles: { text_hover: "group-hover:text-green-500", icon_bg_hover: "group-hover:bg-green-500/25", icon_fill_color: "text-green-500" },
         action: () => { }
     },
@@ -42,7 +39,7 @@ const TWEET_INTERACTIONS = [
     {
         name: "stats",
         icon: { fill_icon: IoStatsChart, empty_icon: IoStatsChart },
-        value: () => "51.1K",
+        value: () => "",
         styles: { text_hover: "group-hover:text-blue-500", icon_bg_hover: "group-hover:bg-blue-500/25", icon_fill_color: "text-blue-500" },
         action: () => { }
     },
@@ -85,35 +82,16 @@ export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
         (state: TweetLikeProps[], new_tweet_like: TweetLikeProps) => [...state, new_tweet_like]
     )
 
-    // const likeTweetAction = async (formData: FormData) => {
-    //     const { data,error } = await likeTweet(formData)
-    //     if(!!error) {
-    //         if(!!likeToggle) {
-    //             console.log(`UNLIKE RESULT client`)
-    //             setTweetLikes(tweetLikes.splice(tweetLikes.findIndex(l => l.user_id === user.id)))  // logic for removing the tweet like from the current user
-    //             setLikeToggle(undefined)
-    //         } else {
-    //             console.log(`LIKE RESULT client data: ${JSON.stringify(data)}`)
-    //             setTweetLikes([...tweetLikes, data[0]])
-    //             setLikeToggle(data[0].tweet_id)
-    //         }
-
-    //     }
-    //     return { data: data, error: error }
-    // }
-
     useEffect(() => {
         // console.log("Logged In User: ", JSON.stringify(user.user));
         // console.log(`TWEET LIKES DISPLAY: ${JSON.stringify(tweetLikes.map((like: TweetLikeProps) => like.user_id))}`)
         // console.log(`LikeToggle status: ${(tweetLikes.map((like: TweetLikeProps) => like.user_id).includes(user.user.id))}`)
 
-        // TWEET_INTERACTIONS[2].action = likeTweetAction;
-
         console.log(`TWEET: ${JSON.stringify(tweet)}`)
         setTweetLikes(tweet.likes);
         setTweetReplied((tweet.replies.length > 0) ? `${tweet.replies.length}` :  "")
-        setLikeToggle((!!tweetLikes.some((like: TweetLikeProps) => like.user_id == user.user.id)) ? tweetLikes[0].id : "");
-    })
+        setLikeToggle((tweetLikes.length > 0 && (!!tweetLikes.some((like: TweetLikeProps) => like?.user_id == user.user.id)) ) ? tweetLikes[0].id : "");
+    }, [tweet, user, tweetLikes, tweetReplied, likeToggle, setTweetLikes, setTweetReplied, setLikeToggle])
 
     return (
         <div className='flex justify-between py-2 px-5 border-b-[0.5px] border-opacity-80 border-gray-500/50'>
@@ -132,8 +110,8 @@ export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
 
                     </div>
                     <div className='w-full mt-2 flex items-center space-x-0 justify-between from-neutral-50 text-gray-500'>
-                        {TWEET_INTERACTIONS.map((item) => (
-                            <form name={item.name} action={item.action}>
+                        {TWEET_INTERACTIONS.map((item, i) => (
+                            <form key={i} name={item.name} action={item.action}>
                                 <input type='checkbox' name="likeCheckbox" className='hidden' checked={!!likeToggle} onChange={() => setLikeToggle(!likeToggle)} />
                                 <input type="text" name="like_value" className='hidden' readOnly value={likeToggle} />
                                 <input type="text" name="tweet_id" className='hidden' readOnly value={tweet.id} />
@@ -148,7 +126,6 @@ export const Tweet = ({ tweet, user }: { tweet: TweetProps, user: any }) => {
                                     </div>
                                 </button>
                             </form>
-
                         ))}
                     </div>
                 </div>

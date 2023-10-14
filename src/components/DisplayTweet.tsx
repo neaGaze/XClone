@@ -3,9 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Tweet } from './Tweet'
 import { TweetLikeProps, TweetProps, TweetReplyProps, TweetUpdateProps, TweetsProps } from '@/app/types/Props'
 import supabase from '@/app/common/supabase'
-import { experimental_useOptimistic as useOptimistic } from 'react'
 import { Button } from './ui/button'
-import { revalidatePath } from 'next/cache'
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs'
 
 const TweetSelector = 
