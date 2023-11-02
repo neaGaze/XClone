@@ -5,6 +5,8 @@ import { Button } from './ui/button'
 import { DialogFooter, DialogHeader, Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from './ui/dialog'
 import { BsDot, BsPatchCheckFill } from 'react-icons/bs'
 import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime);
 import { CreateTweet } from './CreateTweet'
 import { composeTweet } from '@/app/ServerAction/ComposeTweet'
 import { toast } from 'sonner'
