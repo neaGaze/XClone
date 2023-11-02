@@ -46,12 +46,12 @@ export const fetchAllTweet = async () => {
 }
 
 
-export const likesSubscriber = async () => {
-  const supabase = createServerComponentClient({ cookies })
-  const { data: likes, error } = await supabase.from('likes').on('INSERT', (payload) => {
+// export const likesSubscriber = async () => {
+//   const supabase = createServerComponentClient({ cookies })
+//   const { data: likes, error } = await supabase.from('likes').on('INSERT', (payload) => {
 
-  }).subscribe()
-}
+//   }).subscribe()
+// }
 
 export const tweetSubscriber = async () => {
   const supabase = createServerComponentClient({ cookies })
