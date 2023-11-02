@@ -90,7 +90,7 @@ const update_tweet_likes = (tweets: TweetProps[], payload: { new: TweetLikeProps
 const mergeTweets = (tweetMessages: TweetProps[], outstandingTweetMessages: TweetProps[]) : TweetProps[] => {
     
     const merged_tweets = [...outstandingTweetMessages] as TweetProps[]
-    const hash_tweet_ids = {}
+    const hash_tweet_ids: Record<string, TweetProps> = {};
     outstandingTweetMessages.forEach(tweetMessage => { 
         hash_tweet_ids[tweetMessage.id] = tweetMessage;
     })
